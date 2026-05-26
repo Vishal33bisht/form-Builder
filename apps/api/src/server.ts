@@ -11,6 +11,9 @@ import { serverRouter, createContext } from "@repo/trpc/server";
 import { env } from "./env";
 
 export const app = express();
+
+app.set("trust proxy", 1);
+
 const openApiDocument = generateOpenApiDocument(serverRouter, {
   title: "Streamyst OpenAPI",
   version: "1.0.0",
@@ -21,6 +24,7 @@ if (env.NODE_ENV !== "prod") {
   app.use(
     cors({
       origin: "*",
+      credentials: true,
     }),
   );
 }
@@ -47,7 +51,14 @@ app.use(
   "/api",
   createOpenApiExpressMiddleware({
     router: serverRouter,
-    createContext,
+    createContext: ({ req, res }) =>
+      createContext({
+        req: {
+          headers: req.headers as any,
+          ip: req.ip,
+          get: (header: string) => req.get(header),
+        },
+      }),
   }),
 );
 
@@ -55,7 +66,14 @@ app.use(
   "/trpc",
   trpcExpress.createExpressMiddleware({
     router: serverRouter,
-    createContext,
+    createContext: ({ req, res }) =>
+      createContext({
+        req: {
+          headers: req.headers as any,
+          ip: req.ip,
+          get: (header: string) => req.get(header),
+        },
+      }),
   }),
 );
 

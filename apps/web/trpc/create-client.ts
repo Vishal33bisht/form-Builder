@@ -10,9 +10,14 @@ export const createTRPCHttpBatchClientClient = (opts?: CreateTRPCHttpBatchClient
   return c({
     url: env.NEXT_PUBLIC_API_URL ?? "/trpc",
     fetch(url, options) {
+      const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
       return fetch(url, {
         ...options,
         credentials: "include",
+        headers: {
+          ...options?.headers,
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
       });
     },
   });

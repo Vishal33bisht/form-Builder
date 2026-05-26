@@ -13,8 +13,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Streamyst",
-  description: "Media Forwarding",
+  title: "FormCraft - Build Forms That Feel Human",
+  description: "Create beautiful, engaging forms with ease. Typeform-style form builder with themes, analytics, and more.",
 };
 
 export default function RootLayout({
