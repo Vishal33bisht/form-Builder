@@ -42,12 +42,12 @@ export default function LandingPage() {
             >
               API Docs
             </Link>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button variant="ghost" size="sm">
                 Login
               </Button>
             </Link>
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="sm">Start Free</Button>
             </Link>
           </nav>
@@ -67,7 +67,7 @@ export default function LandingPage() {
             anywhere.
           </p>
           <div className="flex items-center justify-center gap-4 pt-4">
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="lg" className="gap-2">
                 Start Building Free <ArrowRight className="h-4 w-4" />
               </Button>
@@ -269,7 +269,7 @@ export default function LandingPage() {
               forms. Start free, no credit card required.
             </CardDescription>
             <div className="pt-4">
-              <Link href="/register">
+              <Link href="/auth/register">
                 <Button size="lg" variant="secondary" className="gap-2">
                   Get Started Free <ArrowRight className="h-4 w-4" />
                 </Button>

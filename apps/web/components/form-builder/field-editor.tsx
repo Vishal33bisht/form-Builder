@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -27,8 +27,8 @@ interface FieldEditorProps {
     placeholder: string | null;
     description: string | null;
     required: boolean | null;
-    options: any;
-    validations: any;
+    options?: any;
+    validations?: any;
   } | null;
   onSave: (data: any) => void;
   onClose: () => void;
@@ -91,10 +91,12 @@ export function FieldEditor({ field, onSave, onClose }: FieldEditorProps) {
 
   const updateOption = (index: number, key: "label" | "value", value: string) => {
     const newOptions = [...options];
-    newOptions[index][key] = value;
+    const option = newOptions[index];
+    if (!option) return;
+    option[key] = value;
     // Auto-generate value from label if value is empty
-    if (key === "label" && !newOptions[index].value) {
-      newOptions[index].value = value.toLowerCase().replace(/\s+/g, "_");
+    if (key === "label" && !option.value) {
+      option.value = value.toLowerCase().replace(/\s+/g, "_");
     }
     setOptions(newOptions);
   };
@@ -285,5 +287,3 @@ export function FieldEditor({ field, onSave, onClose }: FieldEditorProps) {
   );
 }
 
-// Add missing import
-import { useState } from "react";

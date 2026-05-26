@@ -50,12 +50,12 @@ export default function ExplorePage() {
             >
               API Docs
             </Link>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button variant="ghost" size="sm">
                 Login
               </Button>
             </Link>
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="sm">Start Free</Button>
             </Link>
           </nav>
@@ -213,7 +213,7 @@ export default function ExplorePage() {
               Join FormCraft and start building beautiful forms today
             </CardDescription>
             <div className="pt-4">
-              <Link href="/register">
+              <Link href="/auth/register">
                 <Button size="lg" variant="secondary">
                   Get Started Free
                 </Button>

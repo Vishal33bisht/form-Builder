@@ -33,6 +33,7 @@ export default function ResponsesPage({
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [page, setPage] = useState(1);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Get form details
   const { data: formData, isLoading: formLoading } =
@@ -63,10 +64,16 @@ export default function ResponsesPage({
     },
   });
 
-  // Export CSV mutation
-  const exportCsvMutation = trpc.responses.exportCsv.useMutation({
-    onSuccess: (data) => {
-      // Create blob and download
+  const handleDelete = (responseId: string) => {
+    if (confirm("Are you sure you want to delete this response?")) {
+      deleteResponseMutation.mutate({ responseId });
+    }
+  };
+
+  const handleExportCsv = async () => {
+    setIsExporting(true);
+    try {
+      const data = await utils.responses.exportCsv.fetch({ formId });
       const blob = new Blob([data.csv], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -77,20 +84,11 @@ export default function ResponsesPage({
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       toast.success("CSV exported successfully!");
-    },
-    onError: (error) => {
+    } catch (error: any) {
       toast.error(error.message || "Failed to export CSV");
-    },
-  });
-
-  const handleDelete = (responseId: string) => {
-    if (confirm("Are you sure you want to delete this response?")) {
-      deleteResponseMutation.mutate({ responseId });
+    } finally {
+      setIsExporting(false);
     }
-  };
-
-  const handleExportCsv = () => {
-    exportCsvMutation.mutate({ formId });
   };
 
   if (formLoading) {
@@ -141,11 +139,11 @@ export default function ResponsesPage({
         <Button
           onClick={handleExportCsv}
           disabled={
-            exportCsvMutation.isPending || !responsesData?.responses.length
+            isExporting || !responsesData?.responses.length
           }
         >
           <Download className="mr-2 h-4 w-4" />
-          {exportCsvMutation.isPending ? "Exporting..." : "Export CSV"}
+          {isExporting ? "Exporting..." : "Export CSV"}
         </Button>
       </div>
 

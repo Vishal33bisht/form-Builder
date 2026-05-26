@@ -3,8 +3,6 @@ import {
   formResponsesTable,
   formsTable,
   formFieldsTable,
-  usersTable,
-  type InsertFormResponse,
   type SelectFormResponse,
 } from "@repo/database/schema";
 import { eq, desc, sql, and, gte, lte } from "@repo/database";
@@ -57,6 +55,10 @@ class ResponseService {
       })
       .returning();
 
+    if (!response) {
+      throw new Error("Failed to submit response");
+    }
+
     return response;
   }
 
@@ -106,7 +108,7 @@ class ResponseService {
 
     return {
       responses,
-      total: Number(totalResult[0].count),
+      total: Number(totalResult[0]?.count ?? 0),
     };
   }
 
@@ -193,7 +195,9 @@ class ResponseService {
 
     // Build CSV rows
     const rows = responses.map((response) => {
-      const answers = response.answers as Array<{ fieldId: string; value: any }>;
+      const answers = Array.isArray(response.answers)
+        ? (response.answers as Array<{ fieldId: string; value: any }>)
+        : [];
       const answerMap = new Map(answers.map((a) => [a.fieldId, a.value]));
 
       return [
@@ -281,9 +285,9 @@ class ResponseService {
       .orderBy(sql`DATE(${formResponsesTable.submittedAt}) ASC`);
 
     return {
-      totalResponses: Number(totalResult[0].count),
-      todayResponses: Number(todayResult[0].count),
-      weekResponses: Number(weekResult[0].count),
+      totalResponses: Number(totalResult[0]?.count ?? 0),
+      todayResponses: Number(todayResult[0]?.count ?? 0),
+      weekResponses: Number(weekResult[0]?.count ?? 0),
       responsesOverTime: responsesOverTime.map((r) => ({
         date: r.date,
         count: Number(r.count),

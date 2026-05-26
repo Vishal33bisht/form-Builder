@@ -6,7 +6,7 @@ import {
   RateLimitService,
 } from "@repo/services";
 import { TRPCError } from "@trpc/server";
-import { db, usersTable, eq } from "@repo/database";
+import { db, formsTable, eq } from "@repo/database";
 
 const responseService = new ResponseService();
 const formService = new FormService();
@@ -64,11 +64,18 @@ export const responsesRouter = router({
       }
 
       // Get form with fields
-      const formData = await formService.getFormBySlug(
-        (await db.query.formsTable.findFirst({
-          where: eq(db.formsTable.id, input.formId),
-        }))?.slug || ""
-      );
+      const form = await db.query.formsTable.findFirst({
+        where: eq(formsTable.id, input.formId),
+      });
+
+      if (!form) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Form not found",
+        });
+      }
+
+      const formData = await formService.getFormBySlug(form.slug);
 
       if (!formData) {
         throw new TRPCError({

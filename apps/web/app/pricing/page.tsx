@@ -30,7 +30,7 @@ const tiers = [
       "No API access",
     ],
     cta: "Get Started Free",
-    href: "/register",
+    href: "/auth/register",
     popular: false,
   },
   {
@@ -52,7 +52,7 @@ const tiers = [
     ],
     limitations: [],
     cta: "Start Pro Trial",
-    href: "/register",
+    href: "/auth/register",
     popular: true,
   },
   {
@@ -97,12 +97,12 @@ export default function PricingPage() {
             <Link href="/pricing" className="text-sm hover:text-primary">
               Pricing
             </Link>
-            <Link href="/login">
+            <Link href="/auth/login">
               <Button variant="ghost" size="sm">
                 Login
               </Button>
             </Link>
-            <Link href="/register">
+            <Link href="/auth/register">
               <Button size="sm">Start Free</Button>
             </Link>
           </nav>
@@ -258,7 +258,7 @@ export default function PricingPage() {
               Join thousands of creators building beautiful forms with FormCraft
             </CardDescription>
             <div className="pt-4">
-              <Link href="/register">
+              <Link href="/auth/register">
                 <Button size="lg" variant="secondary">
                   Start Free Today <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

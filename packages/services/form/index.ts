@@ -30,7 +30,7 @@ interface UpdateFormInput {
   settings?: any;
   isPasswordProtected?: boolean;
   responseLimit?: number;
-  expiresAt?: Date;
+  expiresAt?: Date | null;
 }
 
 interface GetPublicFormsInput {
@@ -69,6 +69,10 @@ class FormService {
       })
       .returning();
 
+    if (!newForm) {
+      throw new Error("Failed to create form");
+    }
+
     return newForm;
   }
 
@@ -101,6 +105,10 @@ class FormService {
       .set(updates)
       .where(eq(formsTable.id, formId))
       .returning();
+
+    if (!updatedForm) {
+      throw new Error("Failed to update form");
+    }
 
     return updatedForm;
   }
@@ -139,6 +147,10 @@ class FormService {
       .where(eq(formsTable.id, formId))
       .returning();
 
+    if (!updatedForm) {
+      throw new Error("Failed to publish form");
+    }
+
     return updatedForm;
   }
 
@@ -157,6 +169,10 @@ class FormService {
       .set({ status: "draft" })
       .where(eq(formsTable.id, formId))
       .returning();
+
+    if (!updatedForm) {
+      throw new Error("Failed to unpublish form");
+    }
 
     return updatedForm;
   }
@@ -230,7 +246,7 @@ class FormService {
         .from(formResponsesTable)
         .where(eq(formResponsesTable.formId, form.id));
 
-      if (Number(responseCount[0].count) >= form.responseLimit) {
+      if (Number(responseCount[0]?.count ?? 0) >= form.responseLimit) {
         throw new Error("This form has reached its response limit");
       }
     }
@@ -276,7 +292,7 @@ class FormService {
 
     return {
       forms,
-      total: Number(totalResult[0].count),
+      total: Number(totalResult[0]?.count ?? 0),
     };
   }
 
@@ -306,6 +322,10 @@ class FormService {
         settings: form.settings,
       })
       .returning();
+
+    if (!clonedForm) {
+      throw new Error("Failed to clone form");
+    }
 
     // Clone fields
     if (fields.length > 0) {
@@ -387,7 +407,7 @@ class FormService {
         }
       } catch (error) {
         if (error instanceof z.ZodError) {
-          errors[field.id] = error.errors[0].message;
+          errors[field.id] = error.issues[0]?.message || "Invalid answer";
         }
       }
     }

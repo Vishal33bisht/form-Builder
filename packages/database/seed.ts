@@ -193,7 +193,7 @@ async function seed() {
       })
       .returning();
 
-    await db.insert(formFieldsTable).values([
+    const hogwartsFields = await db.insert(formFieldsTable).values([
       {
         formId: hogwartsForm.id,
         type: "short_text",
@@ -256,7 +256,7 @@ async function seed() {
         required: true,
         order: 5,
       },
-    ]);
+    ]).returning();
 
     // Generate 50 responses for Hogwarts form
     const houses = ["gryffindor", "hufflepuff", "ravenclaw", "slytherin"];
@@ -283,12 +283,12 @@ async function seed() {
         respondentIp: `192.168.1.${i}`,
         userAgent: "Mozilla/5.0",
         answers: [
-          { fieldId: "field-1", value: randomName },
-          { fieldId: "field-2", value: randomHouse },
-          { fieldId: "field-3", value: ["potions", "charms"] },
-          { fieldId: "field-4", value: Math.floor(Math.random() * 10) },
-          { fieldId: "field-5", value: "I have always dreamed of learning magic..." },
-          { fieldId: "field-6", value: "2024-09-01" },
+          { fieldId: hogwartsFields[0]!.id, value: randomName },
+          { fieldId: hogwartsFields[1]!.id, value: randomHouse },
+          { fieldId: hogwartsFields[2]!.id, value: ["potions", "charms"] },
+          { fieldId: hogwartsFields[3]!.id, value: Math.floor(Math.random() * 10) },
+          { fieldId: hogwartsFields[4]!.id, value: "I have always dreamed of learning magic..." },
+          { fieldId: hogwartsFields[5]!.id, value: "2024-09-01" },
         ],
         submittedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
       });
@@ -310,7 +310,7 @@ async function seed() {
       })
       .returning();
 
-    await db.insert(formFieldsTable).values([
+    const startupFields = await db.insert(formFieldsTable).values([
       {
         formId: startupForm.id,
         type: "short_text",
@@ -383,7 +383,7 @@ async function seed() {
         order: 7,
         validations: { max: 10 },
       },
-    ]);
+    ]).returning();
 
     // Generate 35 responses
     const stages = ["idea", "mvp", "growth", "scale"];
@@ -394,14 +394,14 @@ async function seed() {
         respondentIp: `10.0.0.${i}`,
         userAgent: "Mozilla/5.0",
         answers: [
-          { fieldId: "field-1", value: `Startup ${i}` },
-          { fieldId: "field-2", value: `founder${i}@startup${i}.com` },
-          { fieldId: "field-3", value: stages[Math.floor(Math.random() * stages.length)] },
-          { fieldId: "field-4", value: Math.floor(Math.random() * 1000000) + 50000 },
-          { fieldId: "field-5", value: "We are solving a major problem in the industry..." },
-          { fieldId: "field-6", value: Math.floor(Math.random() * 20) + 1 },
-          { fieldId: "field-7", value: `https://demo-startup${i}.com` },
-          { fieldId: "field-8", value: Math.floor(Math.random() * 5) + 6 },
+          { fieldId: startupFields[0]!.id, value: `Startup ${i}` },
+          { fieldId: startupFields[1]!.id, value: `founder${i}@startup${i}.com` },
+          { fieldId: startupFields[2]!.id, value: stages[Math.floor(Math.random() * stages.length)] },
+          { fieldId: startupFields[3]!.id, value: Math.floor(Math.random() * 1000000) + 50000 },
+          { fieldId: startupFields[4]!.id, value: "We are solving a major problem in the industry..." },
+          { fieldId: startupFields[5]!.id, value: Math.floor(Math.random() * 20) + 1 },
+          { fieldId: startupFields[6]!.id, value: `https://demo-startup${i}.com` },
+          { fieldId: startupFields[7]!.id, value: Math.floor(Math.random() * 5) + 6 },
         ],
         submittedAt: new Date(Date.now() - Math.random() * 20 * 24 * 60 * 60 * 1000),
       });
@@ -423,7 +423,7 @@ async function seed() {
       })
       .returning();
 
-    await db.insert(formFieldsTable).values([
+    const animeFields = await db.insert(formFieldsTable).values([
       {
         formId: animeForm.id,
         type: "short_text",
@@ -493,7 +493,7 @@ async function seed() {
         required: false,
         order: 6,
       },
-    ]);
+    ]).returning();
 
     // Generate 60 responses
     const series = ["naruto", "one_piece", "aot", "demon_slayer", "other"];
@@ -504,13 +504,13 @@ async function seed() {
         respondentIp: `172.16.0.${i}`,
         userAgent: "Mozilla/5.0",
         answers: [
-          { fieldId: "field-1", value: `Anime Fan ${i}` },
-          { fieldId: "field-2", value: series[Math.floor(Math.random() * series.length)] },
-          { fieldId: "field-3", value: ["naruto", "luffy"] },
-          { fieldId: "field-4", value: Math.floor(Math.random() * 4) + 7 },
-          { fieldId: "field-5", value: "Anime has amazing storytelling and character development!" },
-          { fieldId: "field-6", value: true },
-          { fieldId: "field-7", value: `anime-fan${i}@email.com` },
+          { fieldId: animeFields[0]!.id, value: `Anime Fan ${i}` },
+          { fieldId: animeFields[1]!.id, value: series[Math.floor(Math.random() * series.length)] },
+          { fieldId: animeFields[2]!.id, value: ["naruto", "luffy"] },
+          { fieldId: animeFields[3]!.id, value: Math.floor(Math.random() * 4) + 7 },
+          { fieldId: animeFields[4]!.id, value: "Anime has amazing storytelling and character development!" },
+          { fieldId: animeFields[5]!.id, value: true },
+          { fieldId: animeFields[6]!.id, value: `anime-fan${i}@email.com` },
         ],
         submittedAt: new Date(Date.now() - Math.random() * 25 * 24 * 60 * 60 * 1000),
       });
@@ -532,7 +532,7 @@ async function seed() {
       })
       .returning();
 
-    await db.insert(formFieldsTable).values([
+    const gameFields = await db.insert(formFieldsTable).values([
       {
         formId: gameForm.id,
         type: "short_text",
@@ -606,7 +606,7 @@ async function seed() {
         required: false,
         order: 7,
       },
-    ]);
+    ]).returning();
 
     // Generate 25 responses
     for (let i = 0; i < 25; i++) {
@@ -616,14 +616,14 @@ async function seed() {
         respondentIp: `192.168.100.${i}`,
         userAgent: "Mozilla/5.0",
         answers: [
-          { fieldId: "field-1", value: "Cyber Quest 2077" },
-          { fieldId: "field-2", value: ["pc", "console"] },
-          { fieldId: "field-3", value: Math.floor(Math.random() * 3) + 7 },
-          { fieldId: "field-4", value: Math.floor(Math.random() * 5) + 5 },
-          { fieldId: "field-5", value: "Found a bug in level 3 where character gets stuck..." },
-          { fieldId: "field-6", value: "Would love to see multiplayer mode!" },
-          { fieldId: "field-7", value: ["yes", "maybe"][Math.floor(Math.random() * 2)] },
-          { fieldId: "field-8", value: `tester${i}@gamedev.com` },
+          { fieldId: gameFields[0]!.id, value: "Cyber Quest 2077" },
+          { fieldId: gameFields[1]!.id, value: ["pc", "console"] },
+          { fieldId: gameFields[2]!.id, value: Math.floor(Math.random() * 3) + 7 },
+          { fieldId: gameFields[3]!.id, value: Math.floor(Math.random() * 5) + 5 },
+          { fieldId: gameFields[4]!.id, value: "Found a bug in level 3 where character gets stuck..." },
+          { fieldId: gameFields[5]!.id, value: "Would love to see multiplayer mode!" },
+          { fieldId: gameFields[6]!.id, value: ["yes", "maybe"][Math.floor(Math.random() * 2)] },
+          { fieldId: gameFields[7]!.id, value: `tester${i}@gamedev.com` },
         ],
         submittedAt: new Date(Date.now() - Math.random() * 15 * 24 * 60 * 60 * 1000),
       });
@@ -645,7 +645,7 @@ async function seed() {
       })
       .returning();
 
-    await db.insert(formFieldsTable).values([
+    const linuxFields = await db.insert(formFieldsTable).values([
       {
         formId: linuxForm.id,
         type: "short_text",
@@ -722,7 +722,7 @@ async function seed() {
         order: 6,
         validations: { max: 10 },
       },
-    ]);
+    ]).returning();
 
     // Generate 40 responses
     const distros = ["ubuntu", "arch", "fedora", "debian", "nixos", "other"];
@@ -734,13 +734,13 @@ async function seed() {
         respondentIp: `10.10.10.${i}`,
         userAgent: "Mozilla/5.0",
         answers: [
-          { fieldId: "field-1", value: `Linux User ${i}` },
-          { fieldId: "field-2", value: distros[Math.floor(Math.random() * distros.length)] },
-          { fieldId: "field-3", value: desktops[Math.floor(Math.random() * desktops.length)] },
-          { fieldId: "field-4", value: Math.floor(Math.random() * 15) + 1 },
-          { fieldId: "field-5", value: ["dev", "daily"] },
-          { fieldId: "field-6", value: "Vim is better than Emacs! Fight me!" },
-          { fieldId: "field-7", value: Math.floor(Math.random() * 3) + 8 },
+          { fieldId: linuxFields[0]!.id, value: `Linux User ${i}` },
+          { fieldId: linuxFields[1]!.id, value: distros[Math.floor(Math.random() * distros.length)] },
+          { fieldId: linuxFields[2]!.id, value: desktops[Math.floor(Math.random() * desktops.length)] },
+          { fieldId: linuxFields[3]!.id, value: Math.floor(Math.random() * 15) + 1 },
+          { fieldId: linuxFields[4]!.id, value: ["dev", "daily"] },
+          { fieldId: linuxFields[5]!.id, value: "Vim is better than Emacs! Fight me!" },
+          { fieldId: linuxFields[6]!.id, value: Math.floor(Math.random() * 3) + 8 },
         ],
         submittedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
       });

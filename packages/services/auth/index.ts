@@ -62,6 +62,10 @@ class AuthService {
       })
       .returning();
 
+    if (!newUser) {
+      throw new Error("Failed to create user");
+    }
+
     // Generate JWT
     const token = this.generateToken({
       id: newUser.id,

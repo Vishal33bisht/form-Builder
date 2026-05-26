@@ -19,8 +19,8 @@ interface FormPreviewProps {
     description: string | null;
     required: boolean | null;
     order: number;
-    options: any;
-    validations: any;
+    options?: any;
+    validations?: any;
   }>;
 }
 

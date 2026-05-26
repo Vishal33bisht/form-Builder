@@ -1,7 +1,7 @@
 import { z } from "../../schema";
 import { protectedProcedure, router } from "../../trpc";
 import { ResponseService } from "@repo/services";
-import { db, formResponsesTable, formsTable, formFieldsTable, eq, sql, desc } from "@repo/database";
+import { db, formResponsesTable, formsTable, formFieldsTable, eq, sql } from "@repo/database";
 
 const responseService = new ResponseService();
 
@@ -218,7 +218,7 @@ export const analyticsRouter = router({
           return {
             formId: form.id,
             formTitle: form.title,
-            responseCount: Number(count[0].count),
+            responseCount: Number(count[0]?.count ?? 0),
           };
         })
       );

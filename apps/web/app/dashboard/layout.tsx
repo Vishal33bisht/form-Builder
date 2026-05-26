@@ -82,7 +82,7 @@ export default function DashboardLayout({
   const handleLogout = () => {
     removeAuthToken();
     toast.success("Logged out successfully");
-    router.push("/login");
+    router.push("/auth/login");
   };
 
   const userInitials = user?.fullName

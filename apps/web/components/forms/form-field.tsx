@@ -32,8 +32,8 @@ interface FormFieldProps {
     placeholder: string | null;
     description: string | null;
     required: boolean | null;
-    options: any;
-    validations: any;
+    options?: any;
+    validations?: any;
   };
   value: any;
   onChange: (value: any) => void;
@@ -223,7 +223,6 @@ export function FormField({ field, value, onChange, error }: FormFieldProps) {
                   setDate(newDate);
                   onChange(newDate ? format(newDate, "yyyy-MM-dd") : "");
                 }}
-                initialFocus
               />
             </PopoverContent>
           </Popover>

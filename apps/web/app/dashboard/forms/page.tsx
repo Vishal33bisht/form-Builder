@@ -32,7 +32,7 @@ import { z } from "zod";
 const createFormSchema = z.object({
   title: z.string().min(1, "Title is required").max(255),
   description: z.string().optional(),
-  visibility: z.enum(["public", "unlisted"]).default("unlisted"),
+  visibility: z.enum(["public", "unlisted"]),
 });
 
 type CreateFormData = z.infer<typeof createFormSchema>;

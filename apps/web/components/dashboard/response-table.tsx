@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "~/components/ui/dialog";
 import { Badge } from "~/components/ui/badge";
-import { Eye, Trash2, Download } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import { formatDateTime, truncate } from "~/lib/utils";
 import { ScrollArea } from "~/components/ui/scroll-area";
 
@@ -28,9 +28,9 @@ interface Response {
   respondentEmail: string | null;
   respondentIp: string | null;
   userAgent: string | null;
-  answers: any;
-  submittedAt: Date | null;
-  metadata: any;
+  answers?: any;
+  submittedAt: Date | string | null;
+  metadata?: any;
 }
 
 interface Field {
@@ -160,7 +160,7 @@ export function ResponseTable({
           <DialogHeader>
             <DialogTitle>Response Details</DialogTitle>
             <DialogDescription>
-              Submitted {formatDateTime(selectedResponse?.submittedAt)}
+              Submitted {formatDateTime(selectedResponse?.submittedAt ?? null)}
             </DialogDescription>
           </DialogHeader>
           

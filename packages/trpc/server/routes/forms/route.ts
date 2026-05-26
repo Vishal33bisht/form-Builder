@@ -98,7 +98,7 @@ export const formsRouter = router({
         settings: z.any().optional(),
         isPasswordProtected: z.boolean().optional(),
         responseLimit: z.number().optional(),
-        expiresAt: z.date().optional(),
+        expiresAt: z.date().nullable().optional(),
       })
     )
     .output(formSchema)

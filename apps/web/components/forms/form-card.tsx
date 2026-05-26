@@ -34,7 +34,7 @@ interface FormCardProps {
     slug: string;
     status: "draft" | "published" | "archived";
     visibility: "public" | "unlisted";
-    createdAt: Date | null;
+    createdAt: Date | string | null;
   };
   responseCount?: number;
   onEdit: (formId: string) => void;

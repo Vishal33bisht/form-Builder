@@ -1,6 +1,6 @@
 import { z } from "../../schema";
 import { protectedProcedure, router } from "../../trpc";
-import { db, formFieldsTable, formsTable, eq, asc } from "@repo/database";
+import { db, formFieldsTable, formsTable, eq } from "@repo/database";
 import { TRPCError } from "@trpc/server";
 
 const formFieldSchema = z.object({
@@ -100,6 +100,13 @@ export const fieldsRouter = router({
         })
         .returning();
 
+      if (!field) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create field",
+        });
+      }
+
       return field as any;
     }),
 
@@ -157,6 +164,13 @@ export const fieldsRouter = router({
         .set(updates)
         .where(eq(formFieldsTable.id, fieldId))
         .returning();
+
+      if (!updatedField) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update field",
+        });
+      }
 
       return updatedField as any;
     }),
@@ -253,10 +267,13 @@ export const fieldsRouter = router({
 
       // Update order for each field
       for (let i = 0; i < input.fieldIds.length; i++) {
+        const fieldId = input.fieldIds[i];
+        if (!fieldId) continue;
+
         await db
           .update(formFieldsTable)
           .set({ order: i })
-          .where(eq(formFieldsTable.id, input.fieldIds[i]));
+          .where(eq(formFieldsTable.id, fieldId));
       }
 
       return { success: true };
