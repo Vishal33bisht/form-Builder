@@ -26,7 +26,7 @@ Password: Demo@1234
 - Zod validation for auth, form inputs, field schemas, and dynamic response validation
 - Drizzle ORM schema and migrations for users, forms, fields, responses, and themes
 - Scalar API documentation at `/docs`
-- Creator authentication with JWT and protected dashboard routes
+- Creator authentication with JWT, email/password auth, Google OAuth, and protected dashboard routes
 - Create, edit, publish, unpublish, clone, archive, and manage forms
 - Dynamic fields: short text, long text, email, number, single select, multi select, checkbox, dropdown, rating, and date
 - Required and optional field configuration with validation rules
@@ -69,6 +69,9 @@ FRONTEND_URL=http://localhost:3000
 CORS_ORIGINS=http://localhost:3000
 NEXT_PUBLIC_API_URL=http://localhost:8000/trpc
 NEXT_PUBLIC_API_DOCS_URL=http://localhost:8000/docs
+GOOGLE_OAUTH_CLIENT_ID=
+GOOGLE_OAUTH_CLIENT_SECRET=
+GOOGLE_OAUTH_REDIRECT_URI=http://localhost:3000/auth/google/callback
 SMTP_HOST=
 SMTP_PORT=
 SMTP_USER=
@@ -97,6 +100,22 @@ pnpm build        # production build
 pnpm lint         # lint all apps/packages
 pnpm check-types  # TypeScript checks
 ```
+
+## Google OAuth
+
+Create a Google OAuth web client and add this authorized redirect URI:
+
+```text
+http://localhost:3000/auth/google/callback
+```
+
+For production, add your deployed callback URL:
+
+```text
+<deployed-frontend-url>/auth/google/callback
+```
+
+Then set `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, and `GOOGLE_OAUTH_REDIRECT_URI`.
 
 ## Email Notifications
 

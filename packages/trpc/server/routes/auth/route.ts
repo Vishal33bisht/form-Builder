@@ -10,6 +10,21 @@ const getPath = generatePath("/authentication");
 const authService = new AuthService();
 
 export const authRouter = router({
+  getAuthenticationMethods: publicProcedure
+    .meta({
+      openapi: {
+        method: "GET",
+        path: "/auth/methods",
+        tags: TAGS,
+        summary: "Get supported authentication methods",
+      },
+    })
+    .input(zodUndefinedModel)
+    .output(z.array(getAuthenticationMethodOutputSchema))
+    .query(async () => {
+      return userService.getAuthenticationMethods();
+    }),
+
   register: publicProcedure
     .meta({
       openapi: {
@@ -71,6 +86,35 @@ export const authRouter = router({
     .mutation(async ({ input }) => {
       const result = await authService.login(input);
       return result;
+    }),
+
+  googleCallback: publicProcedure
+    .meta({
+      openapi: {
+        method: "POST",
+        path: "/auth/google/callback",
+        tags: TAGS,
+        summary: "Exchange a Google OAuth code for an application token",
+      },
+    })
+    .input(
+      z.object({
+        code: z.string().min(1),
+      })
+    )
+    .output(
+      z.object({
+        token: z.string(),
+        user: z.object({
+          id: z.string(),
+          email: z.string(),
+          fullName: z.string(),
+          role: z.string(),
+        }),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return authService.loginWithGoogle(input.code);
     }),
 
   me: protectedProcedure

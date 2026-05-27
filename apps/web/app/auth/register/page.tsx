@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { Chrome, Loader2 } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -44,6 +44,11 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { data: authenticationMethods } =
+    trpc.auth.getAuthenticationMethods.useQuery();
+  const googleAuthUrl = authenticationMethods?.find(
+    (method) => method.provider === "GOOGLE_OAUTH"
+  )?.authUrl;
 
   const {
     register,
@@ -69,6 +74,15 @@ export default function RegisterPage() {
     setIsLoading(true);
     const { confirmPassword, ...registerData } = data;
     registerMutation.mutate(registerData);
+  };
+
+  const handleGoogleSignUp = () => {
+    if (!googleAuthUrl) {
+      toast.error("Google sign-up is not configured");
+      return;
+    }
+
+    window.location.href = googleAuthUrl;
   };
 
   return (
@@ -116,7 +130,7 @@ export default function RegisterPage() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="********"
               {...register("password")}
               disabled={isLoading}
             />
@@ -132,7 +146,7 @@ export default function RegisterPage() {
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="••••••••"
+              placeholder="********"
               {...register("confirmPassword")}
               disabled={isLoading}
             />
@@ -148,6 +162,17 @@ export default function RegisterPage() {
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Create Account
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleSignUp}
+            disabled={!googleAuthUrl || isLoading}
+          >
+            <Chrome className="mr-2 h-4 w-4" />
+            Sign up with Google
           </Button>
 
           <div className="text-sm text-center text-muted-foreground">

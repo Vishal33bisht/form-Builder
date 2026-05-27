@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { Chrome, Loader2 } from "lucide-react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -33,6 +33,11 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { data: authenticationMethods } =
+    trpc.auth.getAuthenticationMethods.useQuery();
+  const googleAuthUrl = authenticationMethods?.find(
+    (method) => method.provider === "GOOGLE_OAUTH"
+  )?.authUrl;
 
   const {
     register,
@@ -57,6 +62,15 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     loginMutation.mutate(data);
+  };
+
+  const handleGoogleSignIn = () => {
+    if (!googleAuthUrl) {
+      toast.error("Google sign-in is not configured");
+      return;
+    }
+
+    window.location.href = googleAuthUrl;
   };
 
   return (
@@ -105,6 +119,17 @@ export default function LoginPage() {
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign In
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={handleGoogleSignIn}
+            disabled={!googleAuthUrl || isLoading}
+          >
+            <Chrome className="mr-2 h-4 w-4" />
+            Continue with Google
           </Button>
 
           <div className="text-sm text-center text-muted-foreground">
