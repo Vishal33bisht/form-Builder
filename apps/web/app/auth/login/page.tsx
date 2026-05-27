@@ -88,7 +88,6 @@ export default function LoginPage() {
             <Input
               id="email"
               type="email"
-              placeholder="demo@formcraft.io"
               {...register("email")}
               disabled={isLoading}
             />
@@ -102,7 +101,6 @@ export default function LoginPage() {
             <Input
               id="password"
               type="password"
-              placeholder="********"
               {...register("password")}
               disabled={isLoading}
             />

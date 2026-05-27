@@ -100,7 +100,6 @@ export default function RegisterPage() {
             <Input
               id="fullName"
               type="text"
-              placeholder="John Doe"
               {...register("fullName")}
               disabled={isLoading}
             />
@@ -116,7 +115,6 @@ export default function RegisterPage() {
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
               {...register("email")}
               disabled={isLoading}
             />
@@ -130,7 +128,6 @@ export default function RegisterPage() {
             <Input
               id="password"
               type="password"
-              placeholder="********"
               {...register("password")}
               disabled={isLoading}
             />
@@ -146,7 +143,6 @@ export default function RegisterPage() {
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="********"
               {...register("confirmPassword")}
               disabled={isLoading}
             />
