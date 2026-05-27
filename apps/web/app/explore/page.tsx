@@ -16,6 +16,7 @@ import { Sparkles, Search, ExternalLink, TrendingUp } from "lucide-react";
 import { trpc } from "~/trpc/client";
 import { Skeleton } from "~/components/ui/skeleton";
 import { formatDate } from "~/lib/utils";
+import { apiDocsUrl } from "~/lib/links";
 
 export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,7 +45,7 @@ export default function ExplorePage() {
               Pricing
             </Link>
             <Link
-              href="http://localhost:8000/docs"
+              href={apiDocsUrl}
               target="_blank"
               className="text-sm hover:text-primary"
             >

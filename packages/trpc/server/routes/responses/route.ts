@@ -32,6 +32,14 @@ const formResponseSchema = z.object({
   metadata: z.any().nullable(),
 });
 
+const responseAnswerValueSchema = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.array(z.string()),
+  z.null(),
+]);
+
 export const responsesRouter = router({
   submit: publicProcedure
     .meta({
@@ -48,7 +56,7 @@ export const responsesRouter = router({
         answers: z.array(
           z.object({
             fieldId: z.string(),
-            value: z.any(),
+            value: responseAnswerValueSchema,
           })
         ),
         respondentEmail: z.string().email().optional(),

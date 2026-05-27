@@ -30,6 +30,7 @@ import { trpc } from "~/trpc/client";
 import { ProtectedRoute } from "~/components/dashboard/protected-route";
 import { useState } from "react";
 import { cn } from "~/lib/utils";
+import { apiDocsUrl } from "~/lib/links";
 
 const navigation = [
   {
@@ -62,7 +63,7 @@ const secondaryNav = [
   },
   {
     name: "API Docs",
-    href: "http://localhost:8000/docs",
+    href: apiDocsUrl,
     icon: BookOpen,
     external: true,
   },

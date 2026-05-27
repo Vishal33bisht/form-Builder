@@ -15,28 +15,34 @@ export const app = express();
 app.set("trust proxy", 1);
 
 const openApiDocument = generateOpenApiDocument(serverRouter, {
-  title: "Streamyst OpenAPI",
+  title: "FormCraft OpenAPI",
   version: "1.0.0",
   baseUrl: env.BASE_URL.concat("/api"),
 });
 
-if (env.NODE_ENV !== "prod") {
-  app.use(
-    cors({
-      origin: true,
-      credentials: true,
-    }),
-  );
-}
+const configuredOrigins = [
+  env.FRONTEND_URL,
+  ...(env.CORS_ORIGINS?.split(",").map((origin) => origin.trim()) ?? []),
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin:
+      env.NODE_ENV === "prod" && configuredOrigins.length > 0
+        ? configuredOrigins
+        : true,
+    credentials: true,
+  }),
+);
 
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  return res.json({ message: "Streamyst is up and running..." });
+  return res.json({ message: "FormCraft API is up and running..." });
 });
 
 app.get("/health", (req, res) => {
-  return res.json({ message: "Streamyst server is healthy", healthy: true });
+  return res.json({ message: "FormCraft API is healthy", healthy: true });
 });
 
 logger.debug(`openapi.json: ${env.BASE_URL}/openapi.json`);

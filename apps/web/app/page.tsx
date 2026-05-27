@@ -17,6 +17,7 @@ import {
   ArrowRight,
   CheckCircle,
 } from "lucide-react";
+import { apiDocsUrl } from "~/lib/links";
 
 export default function LandingPage() {
   return (
@@ -36,7 +37,7 @@ export default function LandingPage() {
               Pricing
             </Link>
             <Link
-              href="http://localhost:8000/docs"
+              href={apiDocsUrl}
               target="_blank"
               className="text-sm hover:text-primary"
             >
@@ -308,7 +309,7 @@ export default function LandingPage() {
                 </li>
                 <li>
                   <Link
-                    href="http://localhost:8000/docs"
+                    href={apiDocsUrl}
                     target="_blank"
                     className="hover:text-primary"
                   >

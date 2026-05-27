@@ -1,153 +1,164 @@
-# FormCraft 📝
+# FormCraft
 
-<div align="center">
+FormCraft is a Typeform-inspired form builder built with the required hackathon stack: Turborepo, tRPC, Zod, Drizzle ORM, PostgreSQL, Next.js, Express, and Scalar API docs.
 
-### Build forms that feel human
+Creators can build themed forms, publish or unpublish them, collect public responses, and review response analytics. Public users can submit published forms without logging in.
 
-A modern, production-ready **Typeform-inspired form builder SaaS** built with **Next.js 16**, **tRPC**, **PostgreSQL**, and **Turborepo**.
+## Demo
 
-Create beautiful, interactive forms with drag-and-drop editing, stunning themes, real-time analytics, response management, and seamless sharing.
+- Frontend demo: add deployed frontend URL before final submission
+- API documentation: add deployed API `/docs` URL before final submission
+- Local frontend: http://localhost:3000
+- Local API docs: http://localhost:8000/docs
+- Local OpenAPI JSON: http://localhost:8000/openapi.json
 
-<br />
+Demo creator credentials:
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)
-![tRPC](https://img.shields.io/badge/tRPC-v11-2596be?style=for-the-badge)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue?style=for-the-badge&logo=postgresql)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+```text
+Email: demo@formcraft.io
+Password: Demo@1234
+```
 
-</div>
+## Requirements Coverage
 
----
+- Turborepo monorepo with separate frontend and backend apps
+- tRPC API with type-safe client usage
+- Zod validation for auth, form inputs, field schemas, and dynamic response validation
+- Drizzle ORM schema and migrations for users, forms, fields, responses, and themes
+- Scalar API documentation at `/docs`
+- Creator authentication with JWT and protected dashboard routes
+- Create, edit, publish, unpublish, clone, archive, and manage forms
+- Dynamic fields: short text, long text, email, number, single select, multi select, checkbox, dropdown, rating, and date
+- Required and optional field configuration with validation rules
+- Public submission flow for published forms
+- Public and unlisted visibility modes
+- Explore page shows only public, published forms
+- Unlisted forms are accessible only by direct link
+- Unpublished, expired, limited, invalid, or unavailable forms do not accept responses
+- Response management, pagination, CSV export, and analytics dashboards
+- Seeded demo data with 5 themed forms, 8 themes, and 210 responses
+- Email notification flow for creators and respondents through SMTP
+- Rate limiting for public response submissions
+- Landing page and pricing page
 
-# ✨ Features
+## Tech Stack
 
-## 🎨 Form Builder
-- Drag-and-drop form editor
-- Live form preview
-- Reorder fields dynamically
-- Multi-step form experience
-- Typeform-style UI/UX
-- Responsive across all devices
+- `apps/web`: Next.js 16, React 19, Tailwind CSS, shadcn/ui
+- `apps/api`: Express, tRPC, Scalar, OpenAPI bridge
+- `packages/trpc`: shared API router
+- `packages/services`: business logic, auth, email, rate limiting
+- `packages/database`: Drizzle ORM schema, migrations, seed script
+- `packages/eslint-config`: shared lint configs
+- `packages/typescript-config`: shared TypeScript configs
 
----
+## Getting Started
 
-## 🧩 Supported Field Types
-
-- Short Text
-- Long Text
-- Email
-- Number
-- Phone
-- Select Dropdown
-- Radio Buttons
-- Checkbox
-- Rating
-- Date Picker
-- URL
-- Password
-- File Upload *(optional future support)*
-
----
-
-## 🌈 Beautiful Themes
-
-Includes multiple production-ready themes:
-
-- Hogwarts
-- Cyberpunk 2077
-- Silicon Valley
-- Tokyo Nights
-- Matrix
-- Indie Dev
-- Neon Arcade
-- Arch Linux
-
----
-
-## 📊 Analytics Dashboard
-
-Track form performance with:
-
-- Total responses
-- Completion rates
-- Daily & weekly stats
-- Field-level analytics
-- Charts & visualizations
-- Export responses to CSV
-
----
-
-## 🔐 Security Features
-
-- JWT Authentication
-- Password hashing with bcrypt
-- Protected routes
-- Rate limiting
-- Input validation with Zod
-- SQL injection protection
-- Environment validation
-
----
-
-## 🚀 Production Features
-
-- Public & private forms
-- Custom slugs
-- Response limits
-- Form expiry dates
-- Email notifications
-- Draft & publish workflow
-- CSV export
-- Mobile optimized
-
----
-
-# 🏗️ Tech Stack
-
-## Frontend
-- Next.js 16
-- React 19
-- TypeScript
-- TailwindCSS v4
-- shadcn/ui
-- Recharts
-- dnd-kit
-
-## Backend
-- Express.js v5
-- tRPC v11
-- Node.js
-- JWT Authentication
-
-## Database
-- PostgreSQL
-- Drizzle ORM
-
-## Monorepo
-- Turborepo
-- pnpm workspaces
-
----
-
-# 📁 Project Structure
+Install dependencies:
 
 ```bash
-formcraft/
-│
-├── apps/
-│   ├── api/                # Express + tRPC backend
-│   └── web/                # Next.js frontend
-│
-├── packages/
-│   ├── database/           # Drizzle ORM & schema
-│   ├── services/           # Business logic
-│   ├── trpc/               # Shared tRPC router
-│   ├── logger/             # Winston logger
-│   ├── eslint-config/
-│   └── typescript-config/
-│
-├── .env
-├── turbo.json
-├── pnpm-workspace.yaml
-└── README.md
+pnpm install
+```
+
+Create `.env` from `.env.example` and fill in:
+
+```text
+DATABASE_URL=
+JWT_SECRET=
+BASE_URL=http://localhost:8000
+FRONTEND_URL=http://localhost:3000
+CORS_ORIGINS=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:8000/trpc
+NEXT_PUBLIC_API_DOCS_URL=http://localhost:8000/docs
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
+```
+
+Run migrations and seed data:
+
+```bash
+pnpm --filter @repo/database db:migrate
+pnpm --filter @repo/database db:seed
+```
+
+Start both apps:
+
+```bash
+pnpm dev
+```
+
+## Scripts
+
+```bash
+pnpm dev          # run web and API apps
+pnpm build        # production build
+pnpm lint         # lint all apps/packages
+pnpm check-types  # TypeScript checks
+```
+
+## Email Notifications
+
+SMTP is used when these variables are configured:
+
+```text
+SMTP_HOST
+SMTP_PORT
+SMTP_USER
+SMTP_PASS
+SMTP_FROM
+```
+
+When a response is submitted successfully, FormCraft sends:
+
+- a creator notification to the form owner
+- a respondent confirmation when `respondentEmail` is provided
+
+For Gmail, use an app password for `SMTP_PASS`.
+
+## API Docs
+
+Scalar is mounted by the API app:
+
+- Local docs: http://localhost:8000/docs
+- Local OpenAPI spec: http://localhost:8000/openapi.json
+
+Protected endpoints require:
+
+```text
+Authorization: Bearer <token>
+```
+
+You can get a token by calling `POST /api/auth/login` with the demo credentials.
+
+## Seeded Forms
+
+The seed script creates:
+
+- Hogwarts Enrollment Form: public, published, 50 responses
+- Startup Pitch Application: public, published, 35 responses
+- Anime Character Survey: public, published, 60 responses
+- Game Dev Feedback Form: unlisted, published, 25 responses
+- Linux Distro Preference Poll: public, published, 40 responses
+
+This gives judges immediate data for explore, public form submission, response management, CSV export, and analytics.
+
+## Deployment Checklist
+
+Before final submission, update this README with:
+
+- public GitHub repository URL
+- deployed frontend URL
+- deployed Scalar API docs URL
+
+Production environment variables should include:
+
+```text
+NODE_ENV=prod
+BASE_URL=<deployed-api-url>
+FRONTEND_URL=<deployed-frontend-url>
+CORS_ORIGINS=<deployed-frontend-url>
+NEXT_PUBLIC_API_URL=<deployed-api-url>/trpc
+NEXT_PUBLIC_API_DOCS_URL=<deployed-api-url>/docs
+```

@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { trpc } from "~/trpc/client";
@@ -59,9 +58,6 @@ export default function SettingsPage() {
                   disabled
                 />
               </div>
-              <Button disabled>
-                Save Changes (Not implemented in demo)
-              </Button>
             </>
           )}
         </CardContent>
@@ -93,20 +89,6 @@ export default function SettingsPage() {
               </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-destructive">
-        <CardHeader>
-          <CardTitle className="text-destructive">Danger Zone</CardTitle>
-          <CardDescription>
-            Irreversible actions
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button variant="destructive" disabled>
-            Delete Account (Not implemented in demo)
-          </Button>
         </CardContent>
       </Card>
     </div>

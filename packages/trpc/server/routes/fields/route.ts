@@ -29,6 +29,46 @@ const formFieldSchema = z.object({
   updatedAt: z.date().nullable(),
 });
 
+const fieldOptionSchema = z.object({
+  label: z.string().min(1).max(255),
+  value: z.string().min(1).max(255),
+});
+
+const fieldValidationsSchema = z
+  .object({
+    min: z.number().optional(),
+    max: z.number().optional(),
+    minLength: z.number().int().min(0).optional(),
+    maxLength: z.number().int().min(1).optional(),
+  })
+  .refine(
+    (value) =>
+      value.min === undefined ||
+      value.max === undefined ||
+      value.min <= value.max,
+    { message: "min must be less than or equal to max" }
+  )
+  .refine(
+    (value) =>
+      value.minLength === undefined ||
+      value.maxLength === undefined ||
+      value.minLength <= value.maxLength,
+    { message: "minLength must be less than or equal to maxLength" }
+  );
+
+const fieldTypeSchema = z.enum([
+  "short_text",
+  "long_text",
+  "email",
+  "number",
+  "single_select",
+  "multi_select",
+  "checkbox",
+  "rating",
+  "date",
+  "dropdown",
+]);
+
 export const fieldsRouter = router({
   create: protectedProcedure
     .meta({
@@ -43,25 +83,14 @@ export const fieldsRouter = router({
     .input(
       z.object({
         formId: z.string(),
-        type: z.enum([
-          "short_text",
-          "long_text",
-          "email",
-          "number",
-          "single_select",
-          "multi_select",
-          "checkbox",
-          "rating",
-          "date",
-          "dropdown",
-        ]),
+        type: fieldTypeSchema,
         label: z.string().min(1).max(500),
         placeholder: z.string().max(255).optional(),
         description: z.string().optional(),
         required: z.boolean().optional(),
         order: z.number(),
-        options: z.any().optional(),
-        validations: z.any().optional(),
+        options: z.array(fieldOptionSchema).optional(),
+        validations: fieldValidationsSchema.optional(),
       })
     )
     .output(formFieldSchema)
@@ -128,8 +157,8 @@ export const fieldsRouter = router({
         description: z.string().optional(),
         required: z.boolean().optional(),
         order: z.number().optional(),
-        options: z.any().optional(),
-        validations: z.any().optional(),
+        options: z.array(fieldOptionSchema).optional(),
+        validations: fieldValidationsSchema.optional(),
       })
     )
     .output(formFieldSchema)

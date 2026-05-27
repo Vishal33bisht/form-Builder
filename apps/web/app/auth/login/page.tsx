@@ -88,7 +88,7 @@ export default function LoginPage() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder="********"
               {...register("password")}
               disabled={isLoading}
             />
@@ -99,20 +99,6 @@ export default function LoginPage() {
             )}
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <a
-                href="#"
-                className="text-primary hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  toast.info("Password reset not implemented in demo");
-                }}
-              >
-                Forgot password?
-              </a>
-            </div>
-          </div>
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-4">
