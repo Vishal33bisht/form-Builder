@@ -234,6 +234,10 @@ class FormService {
       throw new Error("This form is not published");
     }
 
+    if (form.isPasswordProtected) {
+      throw new Error("Password-protected forms are not available");
+    }
+
     // Check expiry
     if (form.expiresAt && new Date(form.expiresAt) < new Date()) {
       throw new Error("This form has expired");
@@ -351,71 +355,112 @@ class FormService {
     fields: SelectFormField[],
     answers: Array<{ fieldId: string; value: any }>
   ): { isValid: boolean; errors: Record<string, string> } {
-    const errors: Record<string, string> = {};
-
-    // Create a map of answers for easy lookup
     const answerMap = new Map(answers.map((a) => [a.fieldId, a.value]));
+    const answerValues = Object.fromEntries(answerMap);
+    const responseShape: Record<string, z.ZodTypeAny> = {};
 
     for (const field of fields) {
-      const answer = answerMap.get(field.id);
+      const fieldSchema = this.buildResponseFieldSchema(field);
+      responseShape[field.id] = field.required
+        ? z
+            .any()
+            .superRefine((value, ctx) => {
+              if (
+                value === undefined ||
+                value === null ||
+                value === "" ||
+                (Array.isArray(value) && value.length === 0)
+              ) {
+                ctx.addIssue({
+                  code: "custom",
+                  message: `${field.label} is required`,
+                });
+              }
+            })
+            .pipe(fieldSchema)
+        : z
+            .union([fieldSchema, z.literal(""), z.null(), z.undefined()])
+            .optional();
+    }
 
-      // Check required fields
-      if (field.required && (answer === undefined || answer === null || answer === "")) {
-        errors[field.id] = `${field.label} is required`;
-        continue;
-      }
+    const result = z.object(responseShape).safeParse(answerValues);
 
-      // Skip validation if field is not required and no answer provided
-      if (!answer && !field.required) {
-        continue;
-      }
+    if (result.success) {
+      return {
+        isValid: true,
+        errors: {},
+      };
+    }
 
-      // Type-specific validation
-      try {
-        switch (field.type) {
-          case "email":
-            z.string().email().parse(answer);
-            break;
-          case "number":
-            const numSchema = z.number();
-            const validations = field.validations as any;
-            if (validations?.min !== undefined) {
-              numSchema.min(validations.min);
-            }
-            if (validations?.max !== undefined) {
-              numSchema.max(validations.max);
-            }
-            numSchema.parse(Number(answer));
-            break;
-          case "rating":
-            const ratingValidations = field.validations as any;
-            const max = ratingValidations?.max || 5;
-            z.number().min(1).max(max).parse(Number(answer));
-            break;
-          case "short_text":
-          case "long_text":
-            const textValidations = field.validations as any;
-            let textSchema = z.string();
-            if (textValidations?.minLength) {
-              textSchema = textSchema.min(textValidations.minLength);
-            }
-            if (textValidations?.maxLength) {
-              textSchema = textSchema.max(textValidations.maxLength);
-            }
-            textSchema.parse(answer);
-            break;
-        }
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          errors[field.id] = error.issues[0]?.message || "Invalid answer";
-        }
+    const errors: Record<string, string> = {};
+    for (const issue of result.error.issues) {
+      const fieldId = issue.path[0]?.toString();
+      if (fieldId && !errors[fieldId]) {
+        errors[fieldId] = issue.message || "Invalid answer";
       }
     }
 
     return {
-      isValid: Object.keys(errors).length === 0,
+      isValid: false,
       errors,
     };
+  }
+
+  private buildResponseFieldSchema(field: SelectFormField): z.ZodTypeAny {
+    const validations = (field.validations || {}) as Record<string, any>;
+    const optionValues = Array.isArray(field.options)
+      ? field.options.map((option: any) => option.value)
+      : [];
+
+    switch (field.type) {
+      case "email":
+        return z.string().trim().email();
+      case "number": {
+        let schema = z.coerce.number();
+        if (validations.min !== undefined) {
+          schema = schema.min(validations.min);
+        }
+        if (validations.max !== undefined) {
+          schema = schema.max(validations.max);
+        }
+        return schema;
+      }
+      case "rating": {
+        const max = validations.max || 5;
+        return z.coerce.number().int().min(1).max(max);
+      }
+      case "short_text":
+      case "long_text": {
+        let schema = z.string();
+        if (validations.minLength) {
+          schema = schema.min(validations.minLength);
+        }
+        if (validations.maxLength) {
+          schema = schema.max(validations.maxLength);
+        }
+        return schema;
+      }
+      case "single_select":
+      case "dropdown":
+        return optionValues.length > 0
+          ? z.string().refine((value) => optionValues.includes(value), {
+              message: "Invalid option selected",
+            })
+          : z.string();
+      case "multi_select":
+        return optionValues.length > 0
+          ? z.array(z.string()).refine(
+              (values) => values.every((value) => optionValues.includes(value)),
+              { message: "Invalid option selected" }
+            )
+          : z.array(z.string());
+      case "checkbox":
+        return z.boolean();
+      case "date":
+        return z.string().date();
+      default:
+        return z.any();
+    }
   }
 
   private generateSlug(title: string): string {

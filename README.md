@@ -87,7 +87,6 @@ Track form performance with:
 - Input validation with Zod
 - SQL injection protection
 - Environment validation
-- Optional password-protected forms
 
 ---
 

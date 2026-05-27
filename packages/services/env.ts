@@ -13,6 +13,13 @@ const envSchema = z.object({
   
   // Base URL for links in emails
   BASE_URL: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
+  EMAIL_FROM: z.string().optional(),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.string().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().optional(),
 });
 
 function createEnv(env: NodeJS.ProcessEnv) {

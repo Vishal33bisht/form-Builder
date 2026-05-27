@@ -4,13 +4,22 @@ import {
   ResponseService,
   FormService,
   RateLimitService,
+  EmailService,
 } from "@repo/services";
 import { TRPCError } from "@trpc/server";
-import { db, formsTable, eq } from "@repo/database";
+import {
+  db,
+  formsTable,
+  formResponsesTable,
+  usersTable,
+  eq,
+  sql,
+} from "@repo/database";
 
 const responseService = new ResponseService();
 const formService = new FormService();
 const rateLimitService = new RateLimitService();
+const emailService = new EmailService();
 
 const formResponseSchema = z.object({
   id: z.string(),
@@ -75,12 +84,47 @@ export const responsesRouter = router({
         });
       }
 
-      const formData = await formService.getFormBySlug(form.slug);
+      if (form.status !== "published") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Form is not published",
+        });
+      }
+
+      if (form.isPasswordProtected) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Password-protected forms are not available",
+        });
+      }
+
+      if (form.expiresAt && new Date(form.expiresAt) < new Date()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Form expired",
+        });
+      }
+
+      if (form.responseLimit !== null && form.responseLimit !== undefined) {
+        const responseCount = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(formResponsesTable)
+          .where(eq(formResponsesTable.formId, form.id));
+
+        if (Number(responseCount[0]?.count ?? 0) >= form.responseLimit) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Form response limit reached",
+          });
+        }
+      }
+
+      const formData = await formService.getFormWithFields(input.formId);
 
       if (!formData) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Form not found or not accepting responses",
+          message: "Form not found",
         });
       }
 
@@ -107,6 +151,19 @@ export const responsesRouter = router({
         userAgent: ctx.userAgent,
         metadata: input.metadata,
       });
+
+      const creator = await db.query.usersTable.findFirst({
+        where: eq(usersTable.id, form.userId),
+      });
+
+      await emailService
+        .sendResponseNotifications({
+          formTitle: form.title,
+          formSlug: form.slug,
+          creatorEmail: creator?.email,
+          respondentEmail: input.respondentEmail,
+        })
+        .catch(() => undefined);
 
       return {
         success: true,

@@ -7,6 +7,7 @@
     "@repo/typescript-config": "workspace:*",
     "@types/bcrypt": "^6.0.0",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/nodemailer": "^6.4.17",
     "dotenv-cli": "^11.0.0",
     "typescript": "^5.9.3"
   },
@@ -16,6 +17,7 @@
     "bcrypt": "^6.0.0",
     "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^6.9.16",
     "zod": "^4.3.5"
   }
 }

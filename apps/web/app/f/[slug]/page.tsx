@@ -2,8 +2,7 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Sparkles, Lock, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Sparkles, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -26,9 +25,6 @@ export default function PublicFormPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const router = useRouter();
-  const [password, setPassword] = useState("");
-  const [isPasswordVerified, setIsPasswordVerified] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [respondentEmail, setRespondentEmail] = useState("");
 
@@ -101,50 +97,6 @@ export default function PublicFormPage({
   }
 
   const { form, fields } = formData;
-
-  // Check if password protected
-  if (form.isPasswordProtected && !isPasswordVerified) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="max-w-md w-full">
-          <CardHeader>
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <Lock className="h-6 w-6 text-primary" />
-            </div>
-            <CardTitle className="text-center">Password Protected</CardTitle>
-            <CardDescription className="text-center">
-              This form requires a password to access
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                // In a real app, verify password against hashed value
-                setIsPasswordVerified(true);
-              }}
-              className="space-y-4"
-            >
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter form password"
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                Access Form
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   // Success state
   if (isSubmitted) {
