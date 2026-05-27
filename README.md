@@ -163,13 +163,6 @@ The seed script creates:
 
 This gives judges immediate data for explore, public form submission, response management, CSV export, and analytics.
 
-## Deployment Checklist
-
-Before final submission, update this README with:
-
-- public GitHub repository URL
-- deployed frontend URL
-- deployed Scalar API docs URL
 
 Production environment variables should include:
 
